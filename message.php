@@ -1,5 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <p><h1>留言板作業</h1></p>
 <p id="messageBoard"></p>
 
@@ -10,26 +8,25 @@
 </form></p>
 
 <script>
-  $(document).ready(function(){
-    $.get("/getMsg.php",function(data){
-      $("#messageBoard").html(data);
-    });
-  });
 
+  function getMsg () {
+    let req = new XMLHttpRequest(); 
+    req.open('GET', '/getMsg.php', true);
+    req.send();
+    req.onload = function () {
+      document.querySelector('#messageBoard').innerHTML = this.responseText;
+    };
+  };
+  
+  getMsg();
 
-  $("#sendMsgForm").on("submit", function(event){
+  document.querySelector('#sendMsgButton').addEventListener('click', function (event) {
     event.preventDefault();
-    $.ajax({
-      type: "POST",
-      url: "/sendMsg.php",
-      data: $("#sendMsgForm").serialize(),
-      dataType: "text",
-      success: function(){
-        $.get("/getMsg.php",function(data){
-          $("#messageBoard").html(data);
-        });
-      }
-    })
+    let req = new XMLHttpRequest()
+    const msgFormData = new FormData(document.querySelector('#sendMsgForm'))
+    req.open('POST', "/sendMsg.php", true);
+    req.send(msgFormData)
+    req.onload = getMsg;
   });
 </script>
 
