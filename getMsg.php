@@ -1,20 +1,20 @@
 <?php
     require_once('dbconn.php');
 
-    $separator_msg = '====================';
-
     $sql = "SELECT id, author, title, content FROM messages";
     $result = $dbconn->query($sql);
-    
-    echo $separator_msg;
+    $msgArray = [];
     if($result->num_rows > 0){
       while($row = $result->fetch_assoc()) {
-        $msgLine = sprintf("<p><h3>#%d %s</h3>%s<br>from: %s</p>", $row["id"], $row["title"], $row["content"], $row["author"]);
-        echo $msgLine;
-        echo $separator_msg;
+        $currentMsg = [
+          "id" => $row["id"],
+          "title" => $row["title"],
+          "content" => $row["content"],
+          "author" => $row["author"],
+        ];
+        array_push($msgArray, $currentMsg);
       }
-    } else {
-      echo "<h1>留言板上什麼也沒有</h1>";
     }
+    echo json_encode($msgArray);
     $dbconn->close();
 ?>
